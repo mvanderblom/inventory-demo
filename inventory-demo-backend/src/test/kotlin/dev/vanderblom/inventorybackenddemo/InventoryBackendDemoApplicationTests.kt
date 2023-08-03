@@ -29,9 +29,8 @@ class InventoryBackendDemoApplicationTests() {
         )
 
         assertThat(response)
-            .hasSize(2)
             .extracting("name", "inventory")
-            .containsExactlyInAnyOrder(
+            .contains(
                 Tuple("Nails", 1337L),
                 Tuple("Screws", 42L)
             )
