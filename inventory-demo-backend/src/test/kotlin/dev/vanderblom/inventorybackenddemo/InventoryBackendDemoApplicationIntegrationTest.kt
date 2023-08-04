@@ -1,6 +1,7 @@
 package dev.vanderblom.inventorybackenddemo
 
 import dev.vanderblom.inventorybackenddemo.data.model.Product
+import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
@@ -11,7 +12,7 @@ import reactor.core.publisher.Mono
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class InventoryBackendDemoApplicationTests {
+class InventoryBackendDemoApplicationIntegrationTest {
 
     @Value(value = "\${local.server.port}")
     private val port = 0
@@ -104,6 +105,17 @@ class InventoryBackendDemoApplicationTests {
             .exchange()
             .expectStatus()
             .isUnauthorized()
+    }
+
+    @Test
+    fun `providing invalid data leads to a 400`() {
+        val reservationRequest = ReservationRequestModel(20L, 5 * 60 + 1L)
+        client.put()
+            .uri("1/reserve")
+            .body(Mono.just(reservationRequest), ReservationRequestModel::class.java)
+            .exchange()
+            .expectStatus()
+            .isBadRequest()
     }
 
 }
