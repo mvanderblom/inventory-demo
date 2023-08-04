@@ -58,4 +58,14 @@ class InventoryBackendDemoApplicationTests {
             .hasSize(sizeBefore + 1)
 
     }
+
+    @Test
+    fun `update endpoint returns 404 when trying to update a non-existing product`() {
+        val product = Product("Glue", 420)
+        client.put()
+            .uri("4242")
+            .body(Mono.just(product), Product::class.java)
+            .exchange()
+            .expectStatus().isNotFound()
+    }
 }

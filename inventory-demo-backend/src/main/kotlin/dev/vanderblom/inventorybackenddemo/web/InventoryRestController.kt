@@ -2,6 +2,7 @@ package dev.vanderblom.inventorybackenddemo.web
 
 import dev.vanderblom.inventorybackenddemo.data.ProductRepository
 import dev.vanderblom.inventorybackenddemo.data.model.Product
+import dev.vanderblom.inventorybackenddemo.exceptions.ResourceNotFoundException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,7 +22,8 @@ class InventoryRestController(
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody product: Product) {
-        val data = repo.findById(id).orElseThrow()
+        val data = repo.findById(id)
+            .orElseThrow { ResourceNotFoundException("The product with id $id was not found.") }
         data.name = product.name
         data.inventory = product.inventory
         repo.save(data)
