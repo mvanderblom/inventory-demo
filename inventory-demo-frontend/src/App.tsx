@@ -1,25 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
 import './App.css';
+import {LoginForm, UserCredentials} from "./components/LoginForm";
+import {InventoryApiClient, Product} from "./services/InventoryApiClient";
+import {ProductList} from "./components/ProductList";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+
+const App = () => {
+    const [credentials, setCredentials] = useState<UserCredentials>( );
+    const [products, setProducts] = useState<Product[]>( [] );
+
+    const client = new InventoryApiClient();
+
+    useEffect(() => {
+        refreshList();
+    }, [credentials])
+
+    function login(formData: UserCredentials | undefined) {
+        setCredentials(formData);
+    }
+
+    function logout() {
+        setCredentials(undefined);
+        setProducts([]);
+    }
+
+    function refreshList() {
+        if (credentials) {
+            client.getProducts(credentials).then(products => {
+                setProducts(products)
+            });
+        }
+    }
+
+    return (
+        <div className="App">
+          <h1>Inventory Management</h1>
+            {!credentials && <LoginForm  onSubmit={login}/> }
+            {credentials &&
+                <>
+                    <p>Logged in as {credentials.name}</p>
+                    <button onClick={refreshList}>Refresh List</button>
+                    <button onClick={logout}>Logout</button>
+                    <hr/>
+                    <ProductList  products={products} credentials={credentials} onUpdate={refreshList}></ProductList>
+                </>
+            }
+        </div>
   );
 }
 

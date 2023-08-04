@@ -1,8 +1,23 @@
 # Inventory demo backend
 
-A backend project for an inventory management system.
+A frontend project for an inventory management system.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It's far from complete. It got stuck in the "make it work" phase and never got to "make it pretty".
+It does however demostrate the basic operations that can be performed on the backend rest api.
+
+## Future improvements
+To name a few things:
+ - "Logging in" now only stores credentials in memory and doesn't actually log in. This should be changed.
+ - Statemanagement should be centralized as opposed to passing all dependencies around. Probably with useContext or by going fullblown redux.
+ - Components should be split up
+ - Error handling isn't implemented
+ - Input validation isn't implemented
+ - There's lots of code duplication that can be removed
+ - Styling
+
+
+
+
 
 ## Available Scripts
 

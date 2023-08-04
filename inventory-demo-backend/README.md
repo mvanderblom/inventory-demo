@@ -59,3 +59,5 @@ should go.
   outside world. This could be solved by adding an extra model in the web layer and mapping to it in the
   restcontrollers.
 - The application now uses an in-memory variant of h2. This should also be replaced with a real database
+- Input validation could be improved in for updating the inventory. It now always accepts the new state regardless of
+  current reservations
