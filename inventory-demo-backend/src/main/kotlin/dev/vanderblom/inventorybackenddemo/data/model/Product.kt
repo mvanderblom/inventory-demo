@@ -6,7 +6,8 @@ import jakarta.persistence.*
 data class Product(
         var name: String,
         var inventory: Long,
-        @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+        @OneToMany(cascade = [ CascadeType.ALL ], fetch = FetchType.EAGER)
+        @JoinColumn(name = "product_id")
         val reservations: MutableList<Reservation> = mutableListOf(),
         @Id @GeneratedValue var id: Long? = null
 

@@ -36,12 +36,27 @@ class InventoryServiceTest {
     }
 
     @Test
-    fun `you cant reserve more products than the amount in stock`() {
+    fun `you cant reserve more products than there are in stock`() {
         val product = service.create(Product("Product a", 42L))
 
         assertThatThrownBy {
             service.reserve(product.id, ReservationRequestModel(43L, 1L))
         }.isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("You cannot reserve more than 42 products")
+    }
+
+    @Test
+    fun `product reservations expire`() {
+        val product = service.create(Product("Product a", 42L))
+
+        val reservationDurationSeconds = 1L
+        service.reserve(product.id, ReservationRequestModel(11L, reservationDurationSeconds))
+
+        assertThat(service.read(product.id).inventory)
+            .isEqualTo(31L)
+
+        Thread.sleep(reservationDurationSeconds * 1000 * 2)
+        assertThat(service.read(product.id).inventory)
+            .isEqualTo(42L)
     }
 }

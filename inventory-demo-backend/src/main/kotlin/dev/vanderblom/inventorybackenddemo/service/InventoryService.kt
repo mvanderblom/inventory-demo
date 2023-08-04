@@ -1,32 +1,40 @@
 package dev.vanderblom.inventorybackenddemo.service
 
 import dev.vanderblom.inventorybackenddemo.data.ProductRepository
+import dev.vanderblom.inventorybackenddemo.data.ReservationRepository
 import dev.vanderblom.inventorybackenddemo.data.model.Product
 import dev.vanderblom.inventorybackenddemo.data.model.Reservation
 import dev.vanderblom.inventorybackenddemo.service.model.ProductModel
 import dev.vanderblom.inventorybackenddemo.service.model.ProductUpdateModel
 import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PathVariable
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
 @Service
 class InventoryService(
-    private val repo: ProductRepository
+    private val productRepo: ProductRepository,
+    private val reservationsRepo: ReservationRepository
 )  {
-    fun list(): List<ProductModel> = repo.findAll()
+    fun list(): List<ProductModel> = productRepo.findAll()
         .map(::ProductModel)
         .toList()
 
-    fun create(product: Product) = ProductModel(repo.save(product))
+    fun create(product: Product) = ProductModel(productRepo.save(product))
 
-    fun read(id: Long): ProductModel = ProductModel(repo.getById(id))
+    fun read(id: Long): ProductModel = ProductModel(productRepo.getById(id))
 
     fun update(id: Long, productUpdate: ProductUpdateModel): ProductModel {
-        val product = repo.getById(id)
+        val product = productRepo.getById(id)
         product.name = productUpdate.name
         product.inventory = productUpdate.inventory
-        return ProductModel(repo.save(product))
+        return ProductModel(productRepo.save(product))
     }
 
     fun reserve(id: Long, reservationRequestModel: ReservationRequestModel): ProductModel {
@@ -42,11 +50,17 @@ class InventoryService(
             reservationRequestModel.amount,
             LocalDateTime.now().plusSeconds(reservationRequestModel.seconds)
         )
-        val product = repo.getById(id)
+        val product = productRepo.getById(id)
         product.reservations.add(reservation)
-        return ProductModel(repo.save(product))
+        return ProductModel(productRepo.save(product))
     }
 
-    fun delete(@PathVariable id: Long) = repo.deleteById(id)
+    fun delete(@PathVariable id: Long) = productRepo.deleteById(id)
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Scheduled(fixedRate = 500)
+    fun cleanUpReservations() {
+        reservationsRepo.deleteByExpiresBefore(LocalDateTime.now())
+    }
 
 }
