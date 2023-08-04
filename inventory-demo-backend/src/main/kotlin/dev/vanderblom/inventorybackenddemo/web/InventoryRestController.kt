@@ -5,7 +5,7 @@ import dev.vanderblom.inventorybackenddemo.data.model.Product
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("api/inventory")
+@RequestMapping("api/v1/inventory/")
 class InventoryRestController(
         private val repo: ProductRepository
 )  {

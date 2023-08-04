@@ -14,7 +14,7 @@ class InventoryBackendDemoApplicationTests {
 
     @Value(value = "\${local.server.port}")
     private val port = 0
-    private val baseUrl get() = "http://localhost:$port/api/inventory/"
+    private val baseUrl get() = "http://localhost:$port/api/v1/inventory/"
 
     private lateinit var client: WebTestClient
 
