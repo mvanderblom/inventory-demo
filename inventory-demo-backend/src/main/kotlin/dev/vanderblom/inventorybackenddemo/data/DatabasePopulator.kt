@@ -1,6 +1,5 @@
 package dev.vanderblom.inventorybackenddemo.data
 
-import dev.vanderblom.inventorybackenddemo.data.ProductRepository
 import dev.vanderblom.inventorybackenddemo.data.model.Product
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component

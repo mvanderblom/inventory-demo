@@ -30,8 +30,8 @@ class InventoryBackendDemoApplicationTests {
             .expectStatus().isOk()
             .expectBodyList(Product::class.java)
             .contains(
-                Product("Nails", 1337L, 1L),
-                Product("Screws", 42L, 2L)
+                Product("Nails", 1337L, id=1L),
+                Product("Screws", 42L, id=2L)
             )
     }
 
@@ -56,7 +56,6 @@ class InventoryBackendDemoApplicationTests {
             .expectStatus().isOk()
             .expectBodyList(Product::class.java)
             .hasSize(sizeBefore + 1)
-
     }
 
     @Test
@@ -68,4 +67,5 @@ class InventoryBackendDemoApplicationTests {
             .exchange()
             .expectStatus().isNotFound()
     }
+
 }
