@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication
 import reactor.core.publisher.Mono
 
 
@@ -20,18 +21,22 @@ class InventoryBackendDemoApplicationTests {
 
     @BeforeEach
     fun setUp() {
-        client = WebTestClient.bindToServer().baseUrl(baseUrl).build()
+        client = WebTestClient.bindToServer()
+            .baseUrl(baseUrl)
+            .filter(basicAuthentication("admin", "admin"))
+            .build()
     }
 
     @Test
     fun `list endpoint should return a list of products`() {
         client.get()
             .exchange()
-            .expectStatus().isOk()
+            .expectStatus()
+            .isOk()
             .expectBodyList(Product::class.java)
             .contains(
-                Product("Nails", 1337L, id=1L),
-                Product("Screws", 42L, id=2L)
+                Product("Nails", 1337L, id = 1L),
+                Product("Screws", 42L, id = 2L)
             )
     }
 
@@ -39,7 +44,8 @@ class InventoryBackendDemoApplicationTests {
     fun `create endpoint should add a product`() {
         val sizeBefore = client.get()
             .exchange()
-            .expectStatus().isOk()
+            .expectStatus()
+            .isOk()
             .expectBodyList(Product::class.java)
             .returnResult()
             .responseBody!!
@@ -53,7 +59,8 @@ class InventoryBackendDemoApplicationTests {
 
         client.get()
             .exchange()
-            .expectStatus().isOk()
+            .expectStatus()
+            .isOk()
             .expectBodyList(Product::class.java)
             .hasSize(sizeBefore + 1)
     }
@@ -65,7 +72,38 @@ class InventoryBackendDemoApplicationTests {
             .uri("4242")
             .body(Mono.just(product), Product::class.java)
             .exchange()
-            .expectStatus().isNotFound()
+            .expectStatus()
+            .isNotFound()
+    }
+
+    @Test
+    fun `normal user cannot mutate a product`() {
+        val client = WebTestClient.bindToServer()
+            .baseUrl(baseUrl)
+            .filter(basicAuthentication("user", "user"))
+            .build()
+
+        val product = Product("Glue", 420)
+        client.put()
+            .uri("1")
+            .body(Mono.just(product), Product::class.java)
+            .exchange()
+            .expectStatus()
+            .isForbidden()
+
+    }
+
+    @Test
+    fun `no user gets a 401`() {
+        val client = WebTestClient.bindToServer()
+            .baseUrl(baseUrl)
+            .build()
+
+        client.put()
+            .uri("1")
+            .exchange()
+            .expectStatus()
+            .isUnauthorized()
     }
 
 }
