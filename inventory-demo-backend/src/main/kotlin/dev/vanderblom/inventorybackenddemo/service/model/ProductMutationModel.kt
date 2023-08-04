@@ -1,6 +1,6 @@
 package dev.vanderblom.inventorybackenddemo.service.model
 
-data class ProductUpdateModel(
+data class ProductMutationModel(
     val name: String,
     val inventory: Long
 ) {

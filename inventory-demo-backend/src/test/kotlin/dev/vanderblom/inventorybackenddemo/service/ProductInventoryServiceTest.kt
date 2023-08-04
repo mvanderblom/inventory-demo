@@ -1,6 +1,6 @@
 package dev.vanderblom.inventorybackenddemo.service
 
-import dev.vanderblom.inventorybackenddemo.data.model.Product
+import dev.vanderblom.inventorybackenddemo.service.model.ProductMutationModel
 import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -18,7 +18,7 @@ class ProductInventoryServiceTest {
     @Test
     fun `a product can be added`() {
         val numProductsBefore = service.getAllProducts().size
-        service.createProduct(Product("Product a", 42L))
+        service.createProduct(ProductMutationModel("Product a", 42L))
         assertThat(service.getAllProducts())
             .hasSize(numProductsBefore + 1)
             .extracting("name", "inventory")
@@ -27,7 +27,7 @@ class ProductInventoryServiceTest {
 
     @Test
     fun `a product can be reserved`() {
-        val product = service.createProduct(Product("Product a", 42L))
+        val product = service.createProduct(ProductMutationModel("Product a", 42L))
 
         service.createReservation(product.id, ReservationRequestModel(11L, 10L))
 
@@ -37,7 +37,7 @@ class ProductInventoryServiceTest {
 
     @Test
     fun `you cant reserve more products than there are in stock`() {
-        val product = service.createProduct(Product("Product a", 42L))
+        val product = service.createProduct(ProductMutationModel("Product a", 42L))
 
         assertThatThrownBy {
             service.createReservation(product.id, ReservationRequestModel(43L, 1L))
@@ -47,7 +47,7 @@ class ProductInventoryServiceTest {
 
     @Test
     fun `you cannot reserve products for more than 5 minutes`() {
-        val product = service.createProduct(Product("Product a", 42L))
+        val product = service.createProduct(ProductMutationModel("Product a", 42L))
 
         assertThatThrownBy {
             service.createReservation(product.id, ReservationRequestModel(43L, 5 * 60 + 1))
@@ -57,7 +57,7 @@ class ProductInventoryServiceTest {
 
     @Test
     fun `product reservations expire`() {
-        val product = service.createProduct(Product("Product a", 42L))
+        val product = service.createProduct(ProductMutationModel("Product a", 42L))
 
         val reservationDurationSeconds = 1L
         service.createReservation(product.id, ReservationRequestModel(11L, reservationDurationSeconds))

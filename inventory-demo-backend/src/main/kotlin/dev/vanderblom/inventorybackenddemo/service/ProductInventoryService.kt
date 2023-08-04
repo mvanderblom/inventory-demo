@@ -5,7 +5,7 @@ import dev.vanderblom.inventorybackenddemo.data.ReservationRepository
 import dev.vanderblom.inventorybackenddemo.data.model.Product
 import dev.vanderblom.inventorybackenddemo.data.model.Reservation
 import dev.vanderblom.inventorybackenddemo.service.model.ProductModel
-import dev.vanderblom.inventorybackenddemo.service.model.ProductUpdateModel
+import dev.vanderblom.inventorybackenddemo.service.model.ProductMutationModel
 import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -23,14 +23,17 @@ class ProductInventoryService(
         .map(::ProductModel)
         .toList()
 
-    fun createProduct(product: Product) = ProductModel(productRepo.save(product))
+    fun createProduct(projectMutation: ProductMutationModel): ProductModel {
+        val product = productRepo.save(Product(projectMutation.name, projectMutation.inventory))
+        return ProductModel(product)
+    }
 
     fun readProduct(id: Long): ProductModel = ProductModel(productRepo.getById(id))
 
-    fun updateProduct(id: Long, productUpdate: ProductUpdateModel): ProductModel {
+    fun updateProduct(id: Long, projectMutation: ProductMutationModel): ProductModel {
         val product = productRepo.getById(id)
-        product.name = productUpdate.name
-        product.inventory = productUpdate.inventory
+        product.name = projectMutation.name
+        product.inventory = projectMutation.inventory
         return ProductModel(productRepo.save(product))
     }
 
