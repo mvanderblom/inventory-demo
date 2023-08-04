@@ -1,6 +1,6 @@
 # Inventory demo frontend
 
-A frontend project for an inventory management system.
+A rudimentary frontend project for an inventory management system.
 
 It's far from complete. It got stuck in the "make it work" phase and never got to "make it pretty".
 It does however demostrate the basic operations that can be performed on the backend rest api.
