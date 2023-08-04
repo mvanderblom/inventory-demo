@@ -1,4 +1,4 @@
-package dev.vanderblom.inventorybackenddemo.web
+package dev.vanderblom.inventorybackenddemo.web.exceptionhandling
 
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
@@ -9,7 +9,7 @@ import org.springframework.web.server.ServerWebExchange
 
 
 @ControllerAdvice
-class ExceptionHandling {
+class ExceptionHandlers {
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleNotFoundException(
         exception: EntityNotFoundException,
@@ -27,4 +27,3 @@ class ExceptionHandling {
     }
 }
 
-data class ErrorResponse(val message: String?)

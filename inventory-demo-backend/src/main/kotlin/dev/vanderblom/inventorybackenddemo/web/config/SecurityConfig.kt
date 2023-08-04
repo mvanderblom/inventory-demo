@@ -1,4 +1,4 @@
-package dev.vanderblom.inventorybackenddemo.config
+package dev.vanderblom.inventorybackenddemo.web.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
