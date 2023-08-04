@@ -1,3 +1,3 @@
-package dev.vanderblom.inventorybackenddemo.exceptions
+package dev.vanderblom.inventorybackenddemo.service.exceptions
 
 class ResourceNotFoundException(message: String) : RuntimeException(message)

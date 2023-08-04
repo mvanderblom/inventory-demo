@@ -1,39 +1,29 @@
 package dev.vanderblom.inventorybackenddemo.web
 
-import dev.vanderblom.inventorybackenddemo.data.ProductRepository
 import dev.vanderblom.inventorybackenddemo.data.model.Product
-import dev.vanderblom.inventorybackenddemo.exceptions.ResourceNotFoundException
+import dev.vanderblom.inventorybackenddemo.service.InventoryService
+import dev.vanderblom.inventorybackenddemo.service.model.ProductUpdateModel
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api/v1/inventory/")
 class InventoryRestController(
-        private val repo: ProductRepository
+        private val service: InventoryService
 )  {
 
     @GetMapping("/")
-    fun list(): List<Product> = repo.findAll().toList()
+    fun list(): List<Product> = service.list()
 
     @PostMapping("/")
-    fun create(@RequestBody product: Product) = repo.save(product)
+    fun create(@RequestBody product: Product) = service.create(product)
 
     @GetMapping("/{id}")
-    fun read(@PathVariable id: Long) = repo.findById(id)
+    fun read(@PathVariable id: Long) = service.read(id)
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody product: Product) {
-        val data = repo.findById(id)
-            .orElseThrow { ResourceNotFoundException("The product with id $id was not found.") }
-        data.name = product.name
-        data.inventory = product.inventory
-        repo.save(data)
-    }
+    fun update(@PathVariable id: Long, @RequestBody productUdate: ProductUpdateModel) = service.update(id, productUdate)
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long) = repo.deleteById(id)
-
-
-
-
+    fun delete(@PathVariable id: Long) = service.delete(id)
 
 }

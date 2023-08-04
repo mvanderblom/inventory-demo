@@ -1,6 +1,6 @@
 package dev.vanderblom.inventorybackenddemo.web
 
-import dev.vanderblom.inventorybackenddemo.exceptions.ResourceNotFoundException
+import dev.vanderblom.inventorybackenddemo.service.exceptions.ResourceNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
