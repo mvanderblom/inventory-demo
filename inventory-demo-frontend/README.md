@@ -1,4 +1,4 @@
-# Inventory demo backend
+# Inventory demo frontend
 
 A frontend project for an inventory management system.
 
