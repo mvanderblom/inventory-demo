@@ -13,6 +13,7 @@ To name a few things:
  - Error handling isn't implemented
  - Input validation isn't implemented
  - There's lots of code duplication that can be removed
+ - Nothing here is tested yet
  - Styling
 
 
