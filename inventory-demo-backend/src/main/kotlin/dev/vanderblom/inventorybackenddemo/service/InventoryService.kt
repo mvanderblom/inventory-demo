@@ -7,21 +7,18 @@ import dev.vanderblom.inventorybackenddemo.data.model.Reservation
 import dev.vanderblom.inventorybackenddemo.service.model.ProductModel
 import dev.vanderblom.inventorybackenddemo.service.model.ProductUpdateModel
 import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PathVariable
 import java.time.LocalDateTime
-import java.util.concurrent.TimeUnit
 
 @Service
 class InventoryService(
     private val productRepo: ProductRepository,
     private val reservationsRepo: ReservationRepository
-)  {
+) {
     fun list(): List<ProductModel> = productRepo.findAll()
         .map(::ProductModel)
         .toList()
@@ -43,7 +40,7 @@ class InventoryService(
 
         val productModel = read(id)
 
-        if(reservationRequestModel.amount > productModel.inventory)
+        if (reservationRequestModel.amount > productModel.inventory)
             throw IllegalArgumentException("You cannot reserve more than ${productModel.inventory} products")
 
         val reservation = Reservation(

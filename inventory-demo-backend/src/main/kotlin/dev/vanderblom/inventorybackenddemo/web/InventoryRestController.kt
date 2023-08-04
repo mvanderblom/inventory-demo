@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("api/v1/inventory/")
 class InventoryRestController(
-        private val service: InventoryService
-)  {
+    private val service: InventoryService
+) {
 
     @GetMapping("/")
     fun list(): List<ProductModel> = service.list()
@@ -26,7 +26,8 @@ class InventoryRestController(
     fun update(@PathVariable id: Long, @RequestBody productUdate: ProductUpdateModel) = service.update(id, productUdate)
 
     @PutMapping("/{id}/reserve")
-    fun reserve(@PathVariable id: Long, @RequestBody reservationRequest: ReservationRequestModel) = service.reserve(id, reservationRequest)
+    fun reserve(@PathVariable id: Long, @RequestBody reservationRequest: ReservationRequestModel) =
+        service.reserve(id, reservationRequest)
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)

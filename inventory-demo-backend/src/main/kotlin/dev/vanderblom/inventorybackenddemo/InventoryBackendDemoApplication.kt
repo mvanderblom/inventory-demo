@@ -9,5 +9,5 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class InventoryBackendDemoApplication
 
 fun main(args: Array<String>) {
-	runApplication<InventoryBackendDemoApplication>(*args)
+    runApplication<InventoryBackendDemoApplication>(*args)
 }

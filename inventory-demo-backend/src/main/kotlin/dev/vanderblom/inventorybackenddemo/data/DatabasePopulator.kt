@@ -6,13 +6,15 @@ import org.springframework.stereotype.Component
 
 @Component
 class DatabasePopulator(
-        private val repo: ProductRepository
+    private val repo: ProductRepository
 ) {
     @PostConstruct
     fun init() {
-        repo.saveAll(listOf(
+        repo.saveAll(
+            listOf(
                 Product("Nails", 1337),
                 Product("Screws", 42)
-        ));
+            )
+        );
     }
 }
