@@ -1,61 +1,61 @@
 package dev.vanderblom.inventorybackenddemo
 
 import dev.vanderblom.inventorybackenddemo.data.model.Product
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.groups.Tuple
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpStatus
+import org.springframework.test.web.reactive.server.WebTestClient
+import reactor.core.publisher.Mono
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class InventoryBackendDemoApplicationTests() {
+class InventoryBackendDemoApplicationTests {
+
     @Value(value = "\${local.server.port}")
     private val port = 0
+    private val baseUrl get() = "http://localhost:$port/api/inventory/"
 
-    @Autowired
-    private lateinit var restTemplate: TestRestTemplate
+    private lateinit var client: WebTestClient
 
-    val baseUrl get() = "http://localhost:$port/api/inventory/"
+    @BeforeEach
+    fun setUp() {
+        client = WebTestClient.bindToServer().baseUrl(baseUrl).build()
+    }
 
     @Test
     fun `list endpoint should return a list of products`() {
-        val response = restTemplate.getForObject(
-            baseUrl,
-            Array<Product>::class.java
-        )
-
-        assertThat(response)
-            .extracting("name", "inventory")
+        client.get()
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Product::class.java)
             .contains(
-                Tuple("Nails", 1337L),
-                Tuple("Screws", 42L)
+                Product("Nails", 1337L, 1L),
+                Product("Screws", 42L, 2L)
             )
     }
 
     @Test
     fun `create endpoint should add a product`() {
-        val sizeBefore = restTemplate.getForObject(
-            baseUrl,
-            Array<Product>::class.java
-        ).size
+        val sizeBefore = client.get()
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Product::class.java)
+            .returnResult()
+            .responseBody!!
+            .size
 
         val newProduct = Product("Glue", 420)
-        val createResponse = restTemplate
-            .postForEntity(baseUrl, newProduct, Void::class.java)
+        client.post()
+            .body(Mono.just(newProduct), Product::class.java)
+            .exchange()
+            .expectStatus().isOk()
 
-        assertThat(createResponse.statusCode.value())
-            .isEqualTo(HttpStatus.OK.value())
+        client.get()
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Product::class.java)
+            .hasSize(sizeBefore + 1)
 
-        val sizeAfter = restTemplate.getForObject(
-            baseUrl,
-            Array<Product>::class.java
-        ).size
-
-        assertThat(sizeAfter)
-            .isEqualTo(sizeBefore + 1)
     }
 }

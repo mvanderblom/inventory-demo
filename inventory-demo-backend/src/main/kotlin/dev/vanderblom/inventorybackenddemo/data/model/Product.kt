@@ -5,10 +5,11 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 
 @Entity
-class Product(
+data class Product(
         var name: String,
         var inventory: Long,
         @Id @GeneratedValue var id: Long? = null
 
 ) {
+
 }
