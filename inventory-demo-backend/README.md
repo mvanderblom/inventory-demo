@@ -61,3 +61,4 @@ should go.
 - The application now uses an in-memory variant of h2. This should also be replaced with a real database
 - Input validation could be improved in for updating the inventory. It now always accepts the new state regardless of
   current reservations
+- The implementation for cleaning up the reservation is now based on a scheduler. this leads to a lot of queries to the database. if that causes a problem, a solution using events would be more suitable 
