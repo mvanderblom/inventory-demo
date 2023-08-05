@@ -18,7 +18,13 @@ To name a few things:
 
 
 
+## Running it locally
 
+First install the project locally by running: 
+
+`npm install`
+
+After that you can use the commands below to start the application
 
 ## Available Scripts
 
