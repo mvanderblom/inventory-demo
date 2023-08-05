@@ -24,8 +24,6 @@ class SecurityConfig {
                     .pathMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
                     .pathMatchers(HttpMethod.GET, "/api/**").authenticated()
                     .pathMatchers(HttpMethod.GET).permitAll()
-
-
             }
             .csrf { it.disable() }
             .httpBasic(withDefaults())
