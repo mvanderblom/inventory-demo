@@ -1,9 +1,7 @@
 package dev.vanderblom.inventorybackenddemo.web
 
 import dev.vanderblom.inventorybackenddemo.service.ProductInventoryService
-import dev.vanderblom.inventorybackenddemo.service.model.ProductModel
-import dev.vanderblom.inventorybackenddemo.service.model.ProductMutationModel
-import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
+import dev.vanderblom.inventorybackenddemo.web.model.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -12,7 +10,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("api/v1/product/")
 class ProductRestController(
-    private val service: ProductInventoryService
+    private val service: ProductInventoryService,
+    private val productMapper: ProductMapper,
+    private val productMutationMapper: ProductMutationMapper,
+    private val reservationRequestMapper: ReservationRequestMapper
 ) {
 
     @Operation(summary = "Returns a list of all products")
@@ -22,7 +23,8 @@ class ProductRestController(
         ]
     )
     @GetMapping("/")
-    fun list(): List<ProductModel> = service.getAllProducts()
+    fun list(): List<ProductDto> = service.getAllProducts()
+        .map(productMapper::toDto)
 
     @Operation(
         summary = "Creates a new product",
@@ -34,7 +36,11 @@ class ProductRestController(
         ]
     )
     @PostMapping("/")
-    fun create(@RequestBody productUdate: ProductMutationModel) = service.createProduct(productUdate)
+    fun create(@RequestBody productMutation: ProductMutationDto): ProductDto {
+        val mutationModel = productMutationMapper.toModel(productMutation)
+        val productModel = service.createProduct(mutationModel)
+        return productMapper.toDto(productModel)
+    }
 
     @Operation(summary = "Returns a product identified by the provided id")
     @ApiResponses(
@@ -44,7 +50,7 @@ class ProductRestController(
         ]
     )
     @GetMapping("/{id}")
-    fun read(@PathVariable id: Long) = service.readProduct(id)
+    fun read(@PathVariable id: Long) = productMapper.toDto(service.readProduct(id))
 
     @Operation(summary = "Updates a products information")
     @ApiResponses(
@@ -54,8 +60,11 @@ class ProductRestController(
         ]
     )
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody productUdate: ProductMutationModel) =
-        service.updateProduct(id, productUdate)
+    fun update(@PathVariable id: Long, @RequestBody productMutation: ProductMutationDto): ProductDto {
+        val mutationModel = productMutationMapper.toModel(productMutation)
+        val productModel = service.updateProduct(id, mutationModel)
+        return productMapper.toDto(productModel)
+    }
 
     @Operation(
         summary = "Reserves some products for a period of time",
@@ -76,8 +85,11 @@ class ProductRestController(
         ]
     )
     @PutMapping("/{id}/reserve")
-    fun reserve(@PathVariable id: Long, @RequestBody reservationRequest: ReservationRequestModel) =
-        service.createReservation(id, reservationRequest)
+    fun reserve(@PathVariable id: Long, @RequestBody reservationRequest: ReservationRequestDto): ProductDto {
+        val reservationRequestModel = reservationRequestMapper.toModel(reservationRequest)
+        val productModel = service.createReservation(id, reservationRequestModel)
+        return productMapper.toDto(productModel)
+    }
 
     @Operation(summary = "Deletes the product identified by the provided id")
     @ApiResponses(

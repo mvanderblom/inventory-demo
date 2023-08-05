@@ -44,6 +44,13 @@ should go.
 
 **Data:** Contains all logic related to database access.
 
+Each layer has its own model classes. Manual mapping of object data is done in the service layer, because that's where
+some values are computed.
+The weblayer communicates to the outside world using dto's. This allows you to modify the internal models in the
+service- and data layers without accidentally breaking your contract.
+Mapping to the dto's in the weblayer is done using mapstruct. This prevents you from having to type all the trivial
+mappings by hand.
+
 ## Future improvements
 
 - The API is now using basic auth with an in memory user store. This should be replaced by something that can be used in
@@ -53,12 +60,9 @@ should go.
     - Then you'd probably also need to introduce
       a [BFF](https://aws.amazon.com/blogs/mobile/backends-for-frontends-pattern/#:~:text=According%20to%20Sam%20Newman%2C%20the,one%20general%2Dpurpose%20API%20backend.)
       to avoid storing tokens in the browser
-- If the domain objects become more complex, you could consider using MapStruct for mapping between the database models
-  and the dto's used by the service and web layers
-- The dto's are now shared between the service and web layers. It's good practice to avoid leaking database id's to the
-  outside world. This could be solved by adding an extra model in the web layer and mapping to it in the
-  restcontrollers.
 - The application now uses an in-memory variant of h2. This should also be replaced with a real database
 - Input validation could be improved in for updating the inventory. It now always accepts the new state regardless of
   current reservations
-- The implementation for cleaning up the reservation is now based on a scheduler. this leads to a lot of queries to the database. if that causes a problem, a solution using events would be more suitable 
+- The implementation for cleaning up the reservation is now based on a scheduler. This leads to a lot of queries to the
+  database. If that causes a (performance) problem, another solution should be introduced. Probably one that is
+  event-based.

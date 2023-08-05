@@ -20,21 +20,21 @@ class ProductInventoryService(
     private val reservationsRepo: ReservationRepository
 ) {
     fun getAllProducts(): List<ProductModel> = productRepo.findAll()
-        .map(::ProductModel)
+        .map(ProductModel::of)
         .toList()
 
     fun createProduct(projectMutation: ProductMutationModel): ProductModel {
         val product = productRepo.save(Product(projectMutation.name, projectMutation.inventory))
-        return ProductModel(product)
+        return ProductModel.of(product)
     }
 
-    fun readProduct(id: Long): ProductModel = ProductModel(productRepo.getById(id))
+    fun readProduct(id: Long): ProductModel = ProductModel.of(productRepo.getById(id))
 
     fun updateProduct(id: Long, projectMutation: ProductMutationModel): ProductModel {
         val product = productRepo.getById(id)
         product.name = projectMutation.name
         product.inventory = projectMutation.inventory
-        return ProductModel(productRepo.save(product))
+        return ProductModel.of(productRepo.save(product))
     }
 
     fun createReservation(id: Long, reservationRequestModel: ReservationRequestModel): ProductModel {
@@ -48,7 +48,7 @@ class ProductInventoryService(
         )
         val product = productRepo.getById(id)
         product.reservations.add(reservation)
-        return ProductModel(productRepo.save(product))
+        return ProductModel.of(productRepo.save(product))
     }
 
     fun deleteProduct(@PathVariable id: Long) = productRepo.deleteById(id)

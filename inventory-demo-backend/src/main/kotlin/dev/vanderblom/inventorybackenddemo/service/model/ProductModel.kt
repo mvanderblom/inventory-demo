@@ -1,14 +1,20 @@
 package dev.vanderblom.inventorybackenddemo.service.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import dev.vanderblom.inventorybackenddemo.data.model.Product
 import dev.vanderblom.inventorybackenddemo.data.model.Reservation
 
 class ProductModel(
-    @JsonIgnore
-    private val product: Product
+    val id: Long,
+    val name: String,
+    val inventory: Long
 ) {
-    val id get() = product.id!!
-    val name get() = product.name
-    val inventory get() = product.inventory - product.reservations.sumOf(Reservation::amount)
+
+    companion object {
+        fun of(product: Product): ProductModel {
+            val id = product.id!!
+            val name = product.name
+            val inventory = product.inventory - product.reservations.sumOf(Reservation::amount)
+            return ProductModel(id, name, inventory)
+        }
+    }
 }
