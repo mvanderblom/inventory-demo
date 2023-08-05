@@ -5,9 +5,11 @@ import dev.vanderblom.inventorybackenddemo.service.model.ReservationRequestModel
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.util.concurrent.TimeUnit
 
 @SpringBootTest
 class ProductInventoryServiceTest {
@@ -65,8 +67,10 @@ class ProductInventoryServiceTest {
         assertThat(service.readProduct(product.id).inventory)
             .isEqualTo(31L)
 
-        Thread.sleep(reservationDurationSeconds * 1000 * 2)
-        assertThat(service.readProduct(product.id).inventory)
-            .isEqualTo(42L)
+        await().atMost(2, TimeUnit.SECONDS)
+            .untilAsserted {
+                assertThat(service.readProduct(product.id).inventory)
+                    .isEqualTo(42L)
+            }
     }
 }

@@ -30,6 +30,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.assertj:assertj-core")
+    testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
 }
 
 tasks.withType<KotlinCompile> {
