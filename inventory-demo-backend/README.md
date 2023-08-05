@@ -5,6 +5,7 @@ A backend project for an inventory management system.
 ## Running it locally
 
 Run the application locally by executing the following command from this directory
+
 `.\gradlew bootRun`
 
 ## Exploring the api
