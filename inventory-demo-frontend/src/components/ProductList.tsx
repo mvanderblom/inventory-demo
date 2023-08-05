@@ -21,6 +21,7 @@ export function ProductList({ credentials }: ProductListProps) {
     const refreshList = () => {
         inventoryApiClient.getProducts(credentials).then(products => {
             setProducts(products)
+            setProduct(undefined)
         });
     }
 
