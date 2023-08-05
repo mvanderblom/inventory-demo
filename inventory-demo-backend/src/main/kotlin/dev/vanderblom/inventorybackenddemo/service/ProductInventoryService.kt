@@ -38,13 +38,9 @@ class ProductInventoryService(
     }
 
     fun createReservation(id: Long, reservationRequestModel: ReservationRequestModel): ProductModel {
-        if (reservationRequestModel.seconds > 5 * 60)
-            throw IllegalArgumentException("Max reservation time is 5 minutes")
-
         val productModel = readProduct(id)
-
-        if (reservationRequestModel.amount > productModel.inventory)
-            throw IllegalArgumentException("You cannot reserve more than ${productModel.inventory} products")
+        require(reservationRequestModel.seconds <= 5 * 60) { "Max reservation time is 5 minutes" }
+        require(reservationRequestModel.amount <= productModel.inventory) { "You cannot reserve more than ${productModel.inventory} products" }
 
         val reservation = Reservation(
             reservationRequestModel.amount,
