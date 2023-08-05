@@ -1,12 +1,8 @@
 import React, {useState} from 'react'
+import {UserCredentials} from "../services/Model";
 
 interface FormProps {
     onSubmit: (data: UserCredentials) => void;
-}
-
-export interface UserCredentials {
-    name: string;
-    password: string;
 }
 
 export function LoginForm({onSubmit}: FormProps) {

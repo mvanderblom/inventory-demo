@@ -1,13 +1,7 @@
-import {UserCredentials} from "../components/LoginForm";
-import {Reservation} from "../components/ProductForm";
+import {Product, Reservation, UserCredentials} from "./Model";
 
-export interface Product {
-    id: number | null
-    name: string
-    inventory: number
-}
 
-export class InventoryApiClient {
+class InventoryApiClient {
     public async getProducts(credentials: UserCredentials): Promise<Product[]> {
 
         const response = await fetch('/api/v1/product/', {
@@ -56,6 +50,7 @@ export class InventoryApiClient {
         headers.set('Content-Type', 'application/json');
         return headers;
     }
-
-
 }
+
+const inventoryApiClient = new InventoryApiClient();
+export default inventoryApiClient;

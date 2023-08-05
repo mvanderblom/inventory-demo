@@ -1,6 +1,6 @@
-import {InventoryApiClient, Product} from "../services/InventoryApiClient";
-import {UserCredentials} from "./LoginForm";
+import inventoryApiClient from "../services/InventoryApiClient";
 import React, {useEffect, useState} from "react";
+import {Product, Reservation, UserCredentials} from "../services/Model";
 
 export interface ProductFormProps {
     product: Product
@@ -8,14 +8,7 @@ export interface ProductFormProps {
     onUpdate: () => void
 }
 
-export interface Reservation {
-    amount: number | undefined
-    seconds: number | undefined
-}
-
 export function ProductForm({ product, credentials, onUpdate }: ProductFormProps) {
-
-    const client = new InventoryApiClient();
 
     const [productModel, setProductModel] = useState<Product>( product )
     const [reservation, setReservation] = useState<Reservation>({amount: 0, seconds: 0})
@@ -25,40 +18,40 @@ export function ProductForm({ product, credentials, onUpdate }: ProductFormProps
     }, [product])
 
 
-    function changeName(event: React.ChangeEvent<HTMLInputElement>) {
+    const changeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
         setProductModel({...productModel, name: value});
-    }
+    };
 
-    function changeInventory(event: React.ChangeEvent<HTMLInputElement>) {
+    const changeInventory = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {value} = event.target;
         setProductModel(product = {...productModel, inventory: parseInt(value)});
-    }
+    };
 
-    function create(event: React.FormEvent<HTMLButtonElement>) {
+    const create = (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        client.createProduct(productModel, credentials)
+        inventoryApiClient.createProduct(productModel, credentials)
             .then(onUpdate)
-    }
+    };
 
-    function update(event: React.FormEvent<HTMLButtonElement>) {
+    const update = (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        client.updateProduct(productModel, credentials)
+        inventoryApiClient.updateProduct(productModel, credentials)
             .then(onUpdate)
-    }
+    };
 
-    function remove(event: React.FormEvent<HTMLButtonElement>) {
+    const remove = (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        client.removeProduct(product.id!!, credentials)
+        inventoryApiClient.removeProduct(product.id!!, credentials)
             .then(onUpdate)
-    }
+    };
 
-    function reserve(event: React.FormEvent<HTMLButtonElement>) {
+    const reserve = (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        client.reserveProduct(product.id!!, reservation, credentials)
+        inventoryApiClient.reserveProduct(product.id!!, reservation, credentials)
             .then(onUpdate)
         setReservation({amount: 0, seconds: 0})
-    }
+    };
 
     return (
         <div>

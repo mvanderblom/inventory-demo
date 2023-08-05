@@ -1,23 +1,39 @@
-import {Product} from "../services/InventoryApiClient";
-import {UserCredentials} from "./LoginForm";
 import React, {useEffect, useState} from "react";
+import "./ProductList.css"
+import inventoryApiClient from "../services/InventoryApiClient";
 import {ProductForm} from "./ProductForm";
+import {Product, UserCredentials} from "../services/Model";
 
 export interface ProductListProps{
-    products: Product[]
     credentials: UserCredentials
-    onUpdate: () => void
 }
 
-export function ProductList({ products, credentials, onUpdate}: ProductListProps) {
+export function ProductList({ credentials }: ProductListProps) {
+    const [products, setProducts] = useState<Product[]>( [] );
     const [product, setProduct] = useState<Product | undefined>( undefined)
 
-    useEffect(onUpdate, [product, onUpdate])
+    useEffect(() => {
+        inventoryApiClient.getProducts(credentials).then(products => {
+            setProducts(products)
+        });
+    }, [credentials])
+
+    const refreshList = () => {
+        inventoryApiClient.getProducts(credentials).then(products => {
+            setProducts(products)
+        });
+    }
+
+    const handleUpdate = () => {
+        setProduct(undefined)
+        refreshList()
+    };
 
     return (
-        <>
+        <div >
             <button onClick={() => setProduct({id: null, inventory: 0, name: ""})}>New Product</button>
-            <table border={1}>
+            <button onClick={refreshList}>Refresh List</button>
+            <table>
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -38,8 +54,8 @@ export function ProductList({ products, credentials, onUpdate}: ProductListProps
                 </tbody>
             </table>
             {product &&
-                <ProductForm product={product} credentials={credentials} onUpdate={() => setProduct(undefined)}/>
+                <ProductForm product={product} credentials={credentials} onUpdate={handleUpdate}/>
             }
-        </>
+        </div>
     );
 }
